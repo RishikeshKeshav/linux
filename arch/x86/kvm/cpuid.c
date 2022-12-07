@@ -26,9 +26,13 @@
 #include "trace.h"
 #include "pmu.h"
 
-u32 total_exits = 0;
-EXPORT_SYMBOL(total_exits);
 
+//created global variable exits_count for 0x4ffffffc
+u32 exits_count = 0;
+EXPORT_SYMBOL(exits_count);
+//created global variable cycles_count for 0x4ffffffd
+u64 cycles_count = 0;
+EXPORT_SYMBOL(cycles_count);
 /*
  * Unlike "struct cpuinfo_x86.x86_capability", kvm_cpu_caps doesn't need to be
  * aligned to sizeof(unsigned long) because it's not accessed via bitops.
@@ -1500,17 +1504,31 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 {
 	u32 eax, ebx, ecx, edx;
 
-	if (cpuid_fault_enabled(vcpu) && !kvm_require_cpl(vcpu, 0))
-		return 1;
+	//Assignment2 start changes
+        if (cpuid_fault_enabled(vcpu) && !kvm_require_cpl(vcpu, 0))
+                return 1;
 
-	eax = kvm_rax_read(vcpu);
-	ecx = kvm_rcx_read(vcpu);
-	if (eax == 0x4ffffffc) {
-		eax = total_exits;
-		printk(KERN_INFO "0x4ffffffc Total exits = %d", total_exits);
-	} else {
-		kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
-	}
+        eax = kvm_rax_read(vcpu);
+        ecx = kvm_rcx_read(vcpu);
+
+        if (eax == 0x4ffffffc) {
+                eax = exits_count;
+                printk(KERN_INFO " Total exits count = %d\n", exits_count);
+        }
+        else if (eax == 0x4ffffffd) {
+                printk(KERN_INFO " Total time taken in vmm = %llu\n", cycles_count);
+
+        //Assignment2 end changes
+                eax = 0;
+                ebx = (cycles_count >> 32);
+                ecx = (cycles_count & 0xffffffff);
+                edx = 0;
+        } 
+
+        else {
+                kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
+        }
+	//Assignment2 changes end
 	kvm_rax_write(vcpu, eax);
 	kvm_rbx_write(vcpu, ebx);
 	kvm_rcx_write(vcpu, ecx);

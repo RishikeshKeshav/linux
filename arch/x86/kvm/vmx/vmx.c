@@ -70,7 +70,11 @@
 MODULE_AUTHOR("Qumranet");
 MODULE_LICENSE("GPL");
 
-extern u32 total_exits;
+
+//assignment2 changes start
+extern u32 exits_count;
+extern u64 cycles_count;
+//assignment2 changes end
 
 #ifdef MODULE
 static const struct x86_cpu_id vmx_cpu_id[] = {
@@ -6283,14 +6287,21 @@ void dump_vmcs(struct kvm_vcpu *vcpu)
  * assistance.
  */
 static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+
 {
+        //Assignment2 change start
+
+        u64 enter_rdtsc = rdtsc();
+
+        //Assignment2 changes end
+	
 	struct vcpu_vmx *vmx = to_vmx(vcpu);
 	union vmx_exit_reason exit_reason = vmx->exit_reason;
 	u32 vectoring_info = vmx->idt_vectoring_info;
 	u16 exit_handler_index;
-
-	// Assignment 2&3
-	total_exits = total_exits + 1;
+	
+	// Assignment 2
+	exits_count++;
 
 	/*
 	 * Flush logged GPAs PML buffer, this will make dirty_bitmap more
@@ -6448,7 +6459,9 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 						kvm_vmx_max_exit_handlers);
 	if (!kvm_vmx_exit_handlers[exit_handler_index])
 		goto unexpected_vmexit;
-
+         //Assignment2 changes start
+        cycles_count = cycles_count + (rdtsc() - enter_rdtsc);
+       //Assignment2 changes end
 	return kvm_vmx_exit_handlers[exit_handler_index](vcpu);
 
 unexpected_vmexit:
