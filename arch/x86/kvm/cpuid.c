@@ -1,4 +1,3 @@
-pramathanadig_hassanravishankar@cmpe283assignment-2:~/cmpe283-assignment2-linux/arch/x86/kvm$ cat cpuid.c
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Kernel-based Virtual Machine driver for Linux
