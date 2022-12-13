@@ -78,4 +78,5 @@ There are many exits when a VM is booting. And we noticed that the exit frequenc
   
 2. Of the exit types defined in the SDM, which are the most frequent? Least?
 There are many exit types which are not executed and their exit type is 0. However, of them the most frequent exit type is 48 and the least exit type is 47.
-
+<img width="449" alt="image" src="https://user-images.githubusercontent.com/111613476/207249619-410dbe02-b373-4dcd-a52b-1cc7fecdc408.png">
+<img width="494" alt="image" src="https://user-images.githubusercontent.com/111613476/207249926-ff238d0e-8c6b-4a03-8496-78b3d56dd6cb.png">
